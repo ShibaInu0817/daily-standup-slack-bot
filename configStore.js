@@ -1,24 +1,42 @@
 // configStore.js
+const fs = require('fs');
+const path = require('path');
 
-// In-memory storage keyed by team_id
-const configByTeam = {};
+const CONFIG_FILE = path.join(__dirname, 'standupConfigs.json');
 
-/**
- * Get config for a Slack team.
- * @param {string} teamId
- * @returns {object|null}
- */
+// Read config from file
+function loadConfig() {
+  try {
+    const data = fs.readFileSync(CONFIG_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (err) {
+    console.log('📁 No existing config, starting fresh.');
+    return {};
+  }
+}
+
+// Save config to file
+function saveAllConfig(config) {
+  fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
+}
+
+let configData = loadConfig();
+
 function getConfig(teamId) {
-  return configByTeam[teamId] || null;
+  return configData[teamId];
 }
 
-/**
- * Save config for a Slack team.
- * @param {string} teamId
- * @param {object} config
- */
 function saveConfig(teamId, config) {
-  configByTeam[teamId] = config;
+  configData[teamId] = config;
+  saveAllConfig(configData);
 }
 
-module.exports = { getConfig, saveConfig };
+function getAllConfigs() {
+  return configData;
+}
+
+module.exports = {
+  getConfig,
+  saveConfig,
+  getAllConfigs,
+};

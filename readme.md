@@ -11,3 +11,6 @@ Setup Slack App
 node index.js
 
 ```
+
+## Add how to setup slack app
+coming soon
