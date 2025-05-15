@@ -1,14 +1,10 @@
 {
   "T08RD8HSLLC": {
-    "time": "15:40",
+    "time": "15:39",
     "days": [
-      "monday",
-      "tuesday",
-      "wednesday",
-      "thursday",
-      "friday"
+      "thursday"
     ],
-    "channel": "C08RD8J6Y20",
+    "channel": "C08T5608USC",
     "timezone": "UTC"
   }
 }
