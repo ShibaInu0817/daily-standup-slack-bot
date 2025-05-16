@@ -1,0 +1,148 @@
+---
+description: Slack Standup Bot Editor and Coding Guidelines
+globs: ["**/*.js", "**/*.json", "**/*.md"]
+alwaysApply: true
+---
+# Cursor Rules - Slack Standup Bot
+
+## Editor Configuration
+
+### Indentation
+- Use 2 spaces for indentation, not tabs
+- Configure your editor to display tab characters as 2 spaces
+- Ensure consistent indentation across all files
+
+### Line Endings
+- Use LF (\n) line endings (Unix style), not CRLF
+- Configure git to automatically normalize line endings
+- Configure your editor to show whitespace characters
+
+### Encoding
+- Use UTF-8 encoding for all files
+- Avoid using non-ASCII characters in code
+- Include the BOM (Byte Order Mark) only when necessary
+
+## Code Navigation
+
+### File Structure
+- Always scan the imports at the top of a file to understand dependencies
+- Check function exports at the bottom of the file
+- When editing a route handler, look for corresponding service functions
+
+### Function Navigation
+- Maintain a clear separation between route handlers and service logic
+- Route handlers should be thin and delegate to service functions
+- Look for exported functions to understand a module's interface
+
+## Code Editing
+
+### Code Style
+- Follow existing code style when editing files
+- Use Prettier for code formatting
+- Maintain consistent function parameter ordering
+- Keep line length under 100 characters
+
+### Comments
+- Use JSDoc for all exported functions
+- Include @param and @return tags
+- Comment complex logic but prefer readable code
+- Use TODO comments for pending work, include issue reference
+
+## Refactoring
+
+### Function Extraction
+- Extract reusable logic into helper functions
+- Keep functions focused on a single responsibility
+- When function exceeds 20 lines, consider refactoring
+- Use meaningful names for extracted functions
+
+### Variable Naming
+- Use descriptive variable names
+- Prefix boolean variables with 'is', 'has', 'should', etc.
+- Use consistent variable naming across the codebase
+- Avoid abbreviations except for common ones (e.g., ID, URL)
+
+## Testing Workflow
+
+### Test-Driven Development
+- Write tests before implementing features
+- Run tests frequently during development
+- Fix failing tests before continuing
+- Update tests when changing functionality
+
+### Debug Configuration
+- Configure debugger for Node.js
+- Use breakpoints rather than console.logs
+- Set up watch points for specific variables
+- Configure launch configurations for different environments
+
+## Git Integration
+
+### Commit Workflow
+- Stage changes logically, not all at once
+- Review each changed file before committing
+- Write meaningful commit messages
+- Reference issue numbers in commit messages
+
+### Branch Management
+- Create feature branches from main
+- Keep branches short-lived
+- Rebase before creating pull requests
+- Delete branches after merging
+
+## Slack API Development
+
+### Block Kit Builder
+- Use Block Kit Builder to design message layouts
+- Test message rendering on mobile and desktop
+- Test with different themes (light/dark)
+- Copy formatted JSON from Block Kit Builder for implementation
+
+### API Testing
+- Use Postman or similar tool to test Slack API endpoints
+- Save API responses for reference
+- Test error cases as well as success paths
+- Document API behavior differences
+
+## Standup Bot Specific
+
+### Feature Implementation
+1. Update configuration schema if needed
+2. Add/modify service functions in `/services`
+3. Connect to the appropriate route handler
+4. Test the integration end-to-end
+5. Update documentation
+
+### Debugging Flows
+- For standup initiation issues, check `standupScheduler.js`
+- For user interaction issues, check `standupLogic.js`
+- For Slack API issues, check `slackClient.js`
+- For configuration issues, check `configStore.js`
+
+## Error Handling
+
+### General Patterns
+- Use try/catch blocks around async operations
+- Prefer the await-to-js pattern for error handling
+- Always provide contextual information in error messages
+- Log all errors with appropriate severity levels
+
+### Slack API Errors
+- Handle rate limiting appropriately
+- Implement exponential backoff for retries
+- Check token validity before API calls
+- Distinguish between temporary and permanent errors
+
+## Code Review
+
+### Pull Request Guidelines
+- Keep PRs focused on a single feature or bug fix
+- Include tests for all new functionality
+- Update documentation for API changes
+- Ensure all CI checks pass
+
+### Review Checklist
+- Check for security issues
+- Verify error handling
+- Look for potential race conditions
+- Ensure consistent naming and style

@@ -1,0 +1,13 @@
+---
+description: Slack Standup Bot Project Rules
+globs: ["**/*.js", "**/*.json", "**/*.md"]
+alwaysApply: true
+---
+# Slack Standup Bot Rules
+
+This rule applies the following guidance when developing the Slack Standup Bot:
+
+- Follow the project architecture and code organization in `project-rules.mdc`
+- Adhere to backend development standards in `backend-rules.mdc`
+- Use cursor and editor standards from `cursor-rules.mdc`
+- Refer to the implementation guide in `implementation-guide.mdc` for technical details
