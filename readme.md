@@ -2,6 +2,8 @@ Setup ngrok
 
 ```
 npx ngrok http 3000
+npx localtunnel --port 3000 --subdomain my-staging-daily-standup-bot
+
 ```
 
 

@@ -11,6 +11,21 @@ router.post('/', async (req, res) => {
 
   try {
     const options = await getTeamChannels();
+    
+    // Generate hour options (00-23)
+    const hourOptions = Array.from({ length: 24 }, (_, i) => {
+      const hour = i.toString().padStart(2, '0');
+      return {
+        text: { type: 'plain_text', text: hour },
+        value: hour
+      };
+    });
+    
+    // Generate minute options (00, 15, 30, 45)
+    const minuteOptions = ['00', '15', '30', '45'].map(min => ({
+      text: { type: 'plain_text', text: min },
+      value: min
+    }));
 
     await client.views.open({
       trigger_id,
@@ -35,26 +50,55 @@ router.post('/', async (req, res) => {
             label: { type: 'plain_text', text: 'Select days for standup' },
           },
           {
-            type: 'input',
+            type: 'section',
             block_id: 'time_block',
-            element: {
-              type: 'plain_text_input',
-              action_id: 'standup_time',
-              placeholder: { type: 'plain_text', text: 'e.g., 08:00 (24h format)' },
+            text: {
+              type: 'mrkdwn',
+              text: '*Standup Start Time*'
             },
-            label: { type: 'plain_text', text: 'Standup Start Time' },
+            fields: [
+              {
+                type: 'mrkdwn',
+                text: 'Hour'
+              },
+              {
+                type: 'mrkdwn',
+                text: 'Minute'
+              }
+            ]
           },
           {
-            type: 'input',
-            block_id: 'timezone_block',
-            element: {
-              type: 'plain_text_input',
-              action_id: 'standup_timezone',
-              placeholder: { type: 'plain_text', text: 'e.g., America/New_York, Asia/Kuala_Lumpur' },
-              initial_value: 'UTC'
-            },
-            label: { type: 'plain_text', text: 'Default Timezone' },
-            hint: { type: 'plain_text', text: 'User-specific timezones will be automatically detected from Slack profiles' }
+            type: 'actions',
+            block_id: 'time_selectors',
+            elements: [
+              {
+                type: 'static_select',
+                action_id: 'standup_hour',
+                placeholder: {
+                  type: 'plain_text',
+                  text: 'Hour (24h)'
+                },
+                options: hourOptions
+              },
+              {
+                type: 'static_select',
+                action_id: 'standup_minute',
+                placeholder: {
+                  type: 'plain_text',
+                  text: 'Minute'
+                },
+                options: minuteOptions
+              }
+            ]
+          },
+          {
+            type: 'context',
+            elements: [
+              {
+                type: 'mrkdwn',
+                text: 'Time is in 24-hour format. Example: 09:00 for 9 AM, 14:30 for 2:30 PM'
+              }
+            ]
           },
           {
             type: 'input',
@@ -66,6 +110,15 @@ router.post('/', async (req, res) => {
             },
             label: { type: 'plain_text', text: 'Choose a channel for standup report' },
           },
+          {
+            type: 'context',
+            elements: [
+              {
+                type: 'mrkdwn',
+                text: 'Note: User timezones are automatically detected from Slack profiles. Standups will be sent based on each user\'s local time.'
+              }
+            ]
+          }
         ],
       },
     });
