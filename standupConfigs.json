@@ -1,10 +1,14 @@
 {
   "T08RD8HSLLC": {
-    "time": "15:39",
+    "enableReminders": true,
+    "enableTimeouts": true,
+    "timeoutDuration": 30,
+    "time": "22:30",
     "days": [
-      "thursday"
+      "saturday",
+      "sunday"
     ],
-    "channel": "C08T5608USC",
+    "channel": "C08RD8J6Y20",
     "timezone": "UTC"
   }
 }

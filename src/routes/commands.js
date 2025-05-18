@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const { client } = require('../services/slackClient');
 const { getTeamChannels } = require('../services/teamStore');
+const { DEFAULT_CONFIG } = require('../configStore');
 
 // Handle Slack slash commands
 router.post('/', async (req, res) => {
@@ -25,6 +26,12 @@ router.post('/', async (req, res) => {
     const minuteOptions = ['00', '15', '30', '45'].map(min => ({
       text: { type: 'plain_text', text: min },
       value: min
+    }));
+
+    // Generate timeout duration options (30, 60, 90, 120, 180, 240 minutes)
+    const timeoutOptions = [30, 60, 90, 120, 180, 240].map(minutes => ({
+      text: { type: 'plain_text', text: `${minutes} minutes` },
+      value: minutes.toString()
     }));
 
     await client.views.open({
@@ -109,6 +116,87 @@ router.post('/', async (req, res) => {
               options,
             },
             label: { type: 'plain_text', text: 'Choose a channel for standup report' },
+          },
+          {
+            type: 'section',
+            block_id: 'feature_block',
+            text: {
+              type: 'mrkdwn',
+              text: '*Additional Features*'
+            }
+          },
+          {
+            type: 'actions',
+            block_id: 'reminder_toggle',
+            elements: [
+              {
+                type: 'checkboxes',
+                action_id: 'enable_reminders',
+                options: [
+                  {
+                    text: {
+                      type: 'plain_text',
+                      text: 'Send 30-minute reminders before standup'
+                    },
+                    value: 'true'
+                  }
+                ],
+                initial_options: DEFAULT_CONFIG.enableReminders ? [
+                  {
+                    text: {
+                      type: 'plain_text',
+                      text: 'Send 30-minute reminders before standup'
+                    },
+                    value: 'true'
+                  }
+                ] : []
+              }
+            ]
+          },
+          {
+            type: 'actions',
+            block_id: 'timeout_toggle',
+            elements: [
+              {
+                type: 'checkboxes',
+                action_id: 'enable_timeouts',
+                options: [
+                  {
+                    text: {
+                      type: 'plain_text',
+                      text: 'Enable session timeouts for inactive users'
+                    },
+                    value: 'true'
+                  }
+                ],
+                initial_options: DEFAULT_CONFIG.enableTimeouts ? [
+                  {
+                    text: {
+                      type: 'plain_text',
+                      text: 'Enable session timeouts for inactive users'
+                    },
+                    value: 'true'
+                  }
+                ] : []
+              }
+            ]
+          },
+          {
+            type: 'section',
+            block_id: 'timeout_duration_block',
+            text: {
+              type: 'mrkdwn',
+              text: 'Session timeout duration:'
+            },
+            accessory: {
+              type: 'static_select',
+              action_id: 'timeout_duration',
+              options: timeoutOptions,
+              initial_option: {
+                text: { type: 'plain_text', text: `${DEFAULT_CONFIG.timeoutDuration} minutes` },
+                value: DEFAULT_CONFIG.timeoutDuration.toString()
+              }
+            }
           },
           {
             type: 'context',

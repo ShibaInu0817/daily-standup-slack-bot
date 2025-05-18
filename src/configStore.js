@@ -4,6 +4,13 @@ const path = require('path');
 
 const CONFIG_FILE = path.join(__dirname, '../standupConfigs.json');
 
+// Default configurations
+const DEFAULT_CONFIG = {
+  enableReminders: true,
+  enableTimeouts: true,
+  timeoutDuration: 120 // minutes
+};
+
 // Read config from file
 function loadConfig() {
   try {
@@ -26,8 +33,18 @@ function getConfig(teamId) {
   return configData[teamId];
 }
 
+/**
+ * Saves team configuration with defaults for missing values
+ * @param {string} teamId - The Slack team ID
+ * @param {Object} config - The configuration object
+ */
 function saveConfig(teamId, config) {
-  configData[teamId] = config;
+  // Merge with default configurations for new fields
+  configData[teamId] = {
+    ...DEFAULT_CONFIG,
+    ...configData[teamId], // Include any existing config
+    ...config // Override with new config
+  };
   saveAllConfig(configData);
 }
 
@@ -39,4 +56,5 @@ module.exports = {
   getConfig,
   saveConfig,
   getAllConfigs,
+  DEFAULT_CONFIG
 }; 

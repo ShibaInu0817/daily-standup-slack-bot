@@ -11,6 +11,7 @@ const authRouter = require('./routes/auth');
 
 // Services
 const { scheduleStandups } = require('./services/standupScheduler');
+const { checkTimeouts } = require('./services/standupLogic');
 
 // Initialize Express app
 const app = express();
@@ -36,6 +37,10 @@ app.listen(port, () => {
   console.log(`🚀 Slack bot listening on http://localhost:${port}`);
   scheduleStandups();
 });
+
+// Setup timeout checker interval (checks for inactive standup sessions)
+const TIMEOUT_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
+setInterval(checkTimeouts, TIMEOUT_CHECK_INTERVAL);
 
 // Self-ping to keep the service alive on hosting platforms that sleep after inactivity
 setInterval(() => {

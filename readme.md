@@ -23,6 +23,8 @@ This is a simple Slack bot that helps your team run asynchronous daily standups 
 * 🧢 Ask 3 configurable questions via DM
 * 📋 Post answers to a public/private channel as a thread
 * 🛠️ Configure your standup schedule and channel using `/standup-config`
+* 🔔 Get reminders 30 minutes before your standup starts
+* ⏱️ Automatic session timeout for incomplete standups
 
 ---
 
@@ -85,6 +87,7 @@ project-root/
    channels:read
    groups:read
    mpim:read
+   reactions:read
    ```
 
 4. **Install the App to Workspace**
@@ -112,6 +115,7 @@ project-root/
 
      ```
      message.im
+     reaction_added
      ```
 7. **Allow users to send Slash commands and messages from the messages tab**
     * Go to "App Home" in your Slack app settings
@@ -184,8 +188,25 @@ Render free tier sleeps after 15 minutes. Prevent this using [UptimeRobot](https
 
 1. In Slack, type `/standup-config`
 2. Set your standup time, days, and report channel
-3. You'll get DM'd on schedule to answer standup questions
-4. Answers will be posted in the configured channel 🎉
+3. Configure reminder and timeout settings
+4. You'll get a reminder 30 minutes before your scheduled standup time
+5. You'll get DM'd at the scheduled time to answer standup questions
+6. Answers will be posted in the configured channel 🎉
+7. If you don't respond within the timeout period, your standup session will be automatically closed
+
+---
+
+## ⚙️ Configuration Options
+
+### Reminders
+* When enabled, users receive a DM 30 minutes before their scheduled standup
+* The reminder includes a preview of the questions that will be asked
+* Users can acknowledge the reminder with a 👍 reaction
+
+### Session Timeouts
+* When enabled, incomplete standup sessions will timeout after a configured period (default: 2 hours)
+* Users will receive a notification when their session times out
+* This prevents users from getting stuck in the standup flow if they miss a question
 
 ---
 
@@ -194,6 +215,8 @@ Render free tier sleeps after 15 minutes. Prevent this using [UptimeRobot](https
 * **dispatch\_failed**: Your Render app might be asleep or URL is wrong.
 * **missing\_scope**: You forgot to add required permissions.
 * **timeout**: Slack expects a fast response. Always `res.send()` immediately.
+* **Reminders not working**: Check that your bot has the `chat:write` permission and that reminders are enabled in the configuration.
+* **Timeout not working**: Make sure timeouts are enabled and the timeout duration is set correctly.
 
 ---
 
@@ -211,11 +234,13 @@ If you're seeing this error when trying to message the bot directly, you need to
 4. Under "Subscribe to bot events", add these event subscriptions:
    - `message.im` (for direct messages to your bot)
    - `app_mention` (for mentions in channels)
+   - `reaction_added` (for monitoring reminder acknowledgments)
 5. Then go to "OAuth & Permissions" in the sidebar
 6. Under "Scopes", add these Bot Token Scopes:
    - `chat:write` (to send messages)
    - `im:history` (to receive and process direct messages)
    - `im:read` (to access direct message channels)
+   - `reactions:read` (to read reminder acknowledgments)
 7. Reinstall your app to apply the new permissions
 
 This will allow users to send direct messages to your bot.
@@ -233,3 +258,5 @@ This will allow users to send direct messages to your bot.
 - Collects responses via direct messages
 - Posts compiled standups to a specified channel
 - Configure schedule via Slack command
+- Sends reminders 30 minutes before standup
+- Automatically times out inactive sessions

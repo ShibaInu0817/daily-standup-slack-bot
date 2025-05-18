@@ -23,9 +23,26 @@ router.post('/', express.urlencoded({ extended: true }), async (req, res) => {
       const channel = values.channel_block.standup_channel.selected_option.value;
       const teamId = payload.team.id;
 
+      // Extract feature settings
+      const enableReminders = values.reminder_toggle?.enable_reminders?.selected_options?.length > 0;
+      const enableTimeouts = values.timeout_toggle?.enable_timeouts?.selected_options?.length > 0;
+      const timeoutDuration = parseInt(
+        values.timeout_duration_block?.timeout_duration?.selected_option?.value || "120", 
+        10
+      );
+
       // Use UTC as default timezone if needed by your scheduler
-      saveConfig(teamId, { time, days, channel, timezone: 'UTC' });
-      console.log(`🔧 Saved config for team ${teamId}: ${days.join(', ')} at ${time}`);
+      saveConfig(teamId, { 
+        time, 
+        days, 
+        channel, 
+        timezone: 'UTC',
+        enableReminders,
+        enableTimeouts,
+        timeoutDuration
+      });
+      
+      console.log(`🔧 Saved config for team ${teamId}: ${days.join(', ')} at ${time}, reminders: ${enableReminders}, timeouts: ${enableTimeouts}, timeout duration: ${timeoutDuration}m`);
       scheduleStandups();
       return res.send({ response_action: 'clear' });
     } catch (error) {
