@@ -13,6 +13,7 @@
   "description": "",
   "dependencies": {
     "@slack/web-api": "^7.9.1",
+    "@types/node": "^22.15.29",
     "body-parser": "^2.2.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
@@ -20,6 +21,7 @@
     "node-schedule": "^2.1.1"
   },
   "devDependencies": {
+    "@types/node-schedule": "^2.1.7",
     "nodemon": "^3.0.1"
   }
 }
