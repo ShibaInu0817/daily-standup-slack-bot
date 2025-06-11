@@ -14,20 +14,20 @@ export async function POST(req: NextRequest) {
     const hourOptions = Array.from({ length: 24 }, (_, i) => {
       const hour = i.toString().padStart(2, "0");
       return {
-        text: { type: "plain_text", text: hour },
+        text: { type: "plain_text" as const, text: hour },
         value: hour,
       };
     });
 
     // Generate minute options (00, 15, 30, 45)
     const minuteOptions = ["00", "15", "30", "45"].map((min) => ({
-      text: { type: "plain_text", text: min },
+      text: { type: "plain_text" as const, text: min },
       value: min,
     }));
 
     // Generate timeout duration options (30, 60, 90, 120, 180, 240 minutes)
     const timeoutOptions = [30, 60, 90, 120, 180, 240].map((minutes) => ({
-      text: { type: "plain_text", text: `${minutes} minutes` },
+      text: { type: "plain_text" as const, text: `${minutes} minutes` },
       value: minutes.toString(),
     }));
 

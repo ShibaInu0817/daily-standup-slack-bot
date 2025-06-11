@@ -36,6 +36,10 @@ export interface UserState {
 export interface SlackAPIResponse {
   ok: boolean;
   error?: string;
+  ts?: string;
+  channel?: {
+    id: string;
+  };
 }
 
 // Slack Event Types
@@ -159,18 +163,10 @@ export interface SlackOAuthResponse {
 }
 
 // Configuration Store Types
-export interface ConfigStore {
-  [teamId: string]: StandupConfig;
-}
+export type ConfigStore = Record<string, StandupConfig>;
 
 // User State Store Types
-export interface UserStateStore {
-  [userId: string]: UserState;
-}
+export type UserStateStore = Record<string, UserState>;
 
 // Team Store Types
-export interface TeamStore {
-  [teamId: string]: {
-    [timezone: string]: string[]; // Array of user IDs
-  };
-}
+export type TeamStore = Record<string, Record<string, string[]>>;

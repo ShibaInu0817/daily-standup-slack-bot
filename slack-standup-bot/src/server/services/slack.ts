@@ -1,6 +1,25 @@
-import { WebClient } from "@slack/web-api";
+import { WebClient, type KnownBlock, type View } from "@slack/web-api";
 import { env } from "~/env";
 import type { SlackChannel, SlackUser } from "~/types/slack";
+
+// Add interface for Slack API Error
+interface SlackAPIError extends Error {
+  data: {
+    error: string;
+  };
+}
+
+// Type guard for SlackAPIError
+function isSlackAPIError(error: unknown): error is SlackAPIError {
+  if (!(error instanceof Error)) return false;
+
+  const maybeSlackError = error as Partial<SlackAPIError>;
+  return (
+    typeof maybeSlackError.data === "object" &&
+    maybeSlackError.data !== null &&
+    typeof (maybeSlackError.data as { error?: unknown })?.error === "string"
+  );
+}
 
 class SlackService {
   private static instance: SlackService;
@@ -26,12 +45,12 @@ class SlackService {
     return result.channel.id;
   }
 
-  public async sendDM(userId: string, text: string, blocks?: unknown) {
+  public async sendDM(userId: string, text: string, blocks?: KnownBlock[]) {
     const channelId = await this.openDM(userId);
     return this.client.chat.postMessage({
       channel: channelId,
       text,
-      blocks: blocks as any,
+      blocks: blocks ?? [],
     });
   }
 
@@ -71,7 +90,9 @@ class SlackService {
   // User Operations
   public async listUsers(): Promise<SlackUser[]> {
     try {
-      const result = await this.client.users.list();
+      const result = await this.client.users.list({
+        limit: 200, // Add a reasonable limit
+      });
       if (!result.ok || !result.members) {
         throw new Error("Failed to fetch users");
       }
@@ -101,10 +122,10 @@ class SlackService {
   }
 
   // View Operations
-  public async openModal(triggerId: string, view: unknown) {
+  public async openModal(triggerId: string, view: View) {
     return this.client.views.open({
       trigger_id: triggerId,
-      view: view as any,
+      view: view,
     });
   }
 
@@ -115,8 +136,8 @@ class SlackService {
         await this.postMessage(channelId, "🔍 Verifying bot access...");
         // If successful, we're already in the channel
         return true;
-      } catch (error: any) {
-        if (error?.data?.error === "not_in_channel") {
+      } catch (error: unknown) {
+        if (isSlackAPIError(error) && error.data.error === "not_in_channel") {
           // Try to join the channel
           try {
             await this.client.conversations.join({ channel: channelId });
@@ -125,8 +146,11 @@ class SlackService {
               "👋 Hello! I've joined to post standup summaries here.",
             );
             return true;
-          } catch (joinError: any) {
-            if (joinError?.data?.error === "is_private") {
+          } catch (joinError: unknown) {
+            if (
+              isSlackAPIError(joinError) &&
+              joinError.data.error === "is_private"
+            ) {
               console.error("Cannot join private channel:", channelId);
               return false;
             }

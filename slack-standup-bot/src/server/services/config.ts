@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { type StandupConfig } from "~/types/slack";
+import { type ConfigStore, type StandupConfig } from "~/types/slack";
 
 const CONFIG_FILE = path.join(process.cwd(), "data/config.json");
 
@@ -14,7 +14,7 @@ const DEFAULT_CONFIG: Partial<StandupConfig> = {
 
 class ConfigService {
   private static instance: ConfigService;
-  private configData: Record<string, StandupConfig>;
+  private configData: ConfigStore;
 
   private constructor() {
     this.configData = this.loadConfig();
@@ -27,7 +27,7 @@ class ConfigService {
     return ConfigService.instance;
   }
 
-  private loadConfig(): Record<string, StandupConfig> {
+  private loadConfig(): ConfigStore {
     try {
       // Ensure directory exists
       const dir = path.dirname(CONFIG_FILE);
@@ -41,14 +41,22 @@ class ConfigService {
       }
 
       const data = fs.readFileSync(CONFIG_FILE, "utf8");
-      return JSON.parse(data);
+      const parsed = JSON.parse(data) as unknown;
+
+      // Validate that it's a record of StandupConfig
+      if (typeof parsed === "object" && parsed !== null) {
+        return parsed as ConfigStore;
+      }
+
+      console.warn("Invalid config file format, starting fresh");
+      return {};
     } catch (err) {
       console.log("📁 No existing config, starting fresh.");
       return {};
     }
   }
 
-  private saveAllConfig(config: Record<string, StandupConfig>): void {
+  private saveAllConfig(config: ConfigStore): void {
     // Write to a temporary file first
     const tempFile = `${CONFIG_FILE}.tmp`;
     fs.writeFileSync(tempFile, JSON.stringify(config, null, 2));
@@ -72,7 +80,7 @@ class ConfigService {
     this.saveAllConfig(this.configData);
   }
 
-  public getAllConfigs(): Record<string, StandupConfig> {
+  public getAllConfigs(): ConfigStore {
     return this.configData;
   }
 }
