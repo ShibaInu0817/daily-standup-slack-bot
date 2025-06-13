@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     // Create tRPC caller
     const caller = createCaller({
       headers: req.headers,
-      db: undefined as any, // We're not using the database in this implementation
+      // db: undefined as any, // We're not using the database in this implementation
     });
 
     // Handle OAuth

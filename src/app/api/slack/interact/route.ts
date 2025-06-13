@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
       );
 
       // Save configuration
-      await configService.saveConfig(teamId, {
+      configService.saveConfig(teamId, {
         time,
         days: validDays,
         channel,
@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
       // Reschedule standups
       const caller = createCaller({
         headers: req.headers,
-        db: null as any, // We're using in-memory storage, so we don't need the database
+        // db: null as any, // We're using in-memory storage, so we don't need the database
       });
 
       try {

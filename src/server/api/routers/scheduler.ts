@@ -131,10 +131,8 @@ function groupUsersByTimezone(users: SlackUser[]) {
   const usersByTimezone: Record<string, SlackUser[]> = {};
 
   for (const user of users) {
-    const timezone = user.tz || "UTC";
-    if (!usersByTimezone[timezone]) {
-      usersByTimezone[timezone] = [];
-    }
+    const timezone = user.tz ?? "UTC";
+    usersByTimezone[timezone] ??= [];
     usersByTimezone[timezone].push(user);
   }
 

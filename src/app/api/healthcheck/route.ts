@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     if (now - lastTimeoutCheck > TIMEOUT_CHECK_INTERVAL) {
       const caller = createCaller({
         headers: req.headers,
-        db: undefined,
+        // db: undefined,
       });
 
       await caller.standup.checkTimeouts();

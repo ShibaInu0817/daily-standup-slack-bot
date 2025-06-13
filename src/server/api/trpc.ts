@@ -26,7 +26,8 @@ import { db } from "~/server/db";
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   return {
-    db,
+    // TODO: Remove this once we have a real database
+    // db,
     ...opts,
   };
 };

@@ -24,10 +24,8 @@ export const teamRouter = createTRPCRouter({
       const usersByTimezone: Record<string, string[]> = {};
 
       for (const user of users) {
-        const timezone = user.tz || "UTC";
-        if (!usersByTimezone[timezone]) {
-          usersByTimezone[timezone] = [];
-        }
+        const timezone = user.tz ?? "UTC";
+        usersByTimezone[timezone] ??= [];
         usersByTimezone[timezone].push(user.id);
       }
 

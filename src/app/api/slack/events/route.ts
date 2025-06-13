@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
       // Create tRPC caller with headers
       const caller = createCaller({
         headers: req.headers,
-        db: undefined, // We're not using the database in this implementation
+        // db: undefined, // We're not using the database in this implementation
       });
 
       // Check if user is in standup
