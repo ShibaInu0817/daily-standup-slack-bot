@@ -6,6 +6,8 @@ import { type SlackEventPayload } from "~/types/slack";
 
 export async function POST(req: NextRequest) {
   try {
+    console.log("Received Slack event");
+    console.dir(req, { depth: null });
     // Verify request signature
     const timestamp = req.headers.get("x-slack-request-timestamp");
     const signature = req.headers.get("x-slack-signature");
