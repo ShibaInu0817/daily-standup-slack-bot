@@ -6,16 +6,9 @@ A Next.js application that helps teams conduct daily standups through Slack.
 
 The API documentation is available through Swagger UI at `/api/docs`. This provides interactive documentation for all HTTP endpoints in the application.
 
-### Viewing the Documentation
-
-1. Start the development server:
-```bash
-npm run dev
+### Local Development
 ```
-
-2. Open your browser and navigate to:
-```
-http://localhost:3000/api/docs
+npx ngrok http 3000
 ```
 
 The Swagger UI will show all available endpoints, their request/response schemas, and allow you to test them directly from the browser.
@@ -36,6 +29,12 @@ The Swagger UI will show all available endpoints, their request/response schemas
   - Processes direct messages for standup responses
   - Verifies Slack request signatures
   - URL Verification endpoint for Slack
+
+- `POST /api/slack/test-standup`
+  - Testing endpoint to trigger a standup manually
+  - Requires userId and teamId in request body
+  - Bypasses scheduler for testing purposes
+  - Returns success/failure status
 
 - `GET /api/slack/auth`
   - OAuth callback endpoint for Slack app installation
